@@ -4,14 +4,16 @@ void main() {
   runApp(
       MaterialApp(
         theme: ThemeData(
-          iconTheme: IconThemeData(
-            color: Colors.blue
-          ),
-          appBarTheme: AppBarTheme( color: Colors.grey, actionsIconTheme: IconThemeData(
-              color: Colors.blue
-          )),
-          textTheme: TextTheme(
-            bodyText2: TextStyle(color: Colors.red)
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
+            actionsIconTheme: IconThemeData(
+              color: Colors.black,
+              size: 30
+            ),
+            titleTextStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 20
+            )
           )
         ),
         home: MyApp(),
@@ -25,8 +27,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [Icon(Icons.star)]),
-      body: Text('Hi'),
+      appBar: AppBar(
+          title: Text('Instagram'),
+          actions: [
+            Icon(Icons.add_box_outlined)
+          ]
+      )
     );
   }
 }
