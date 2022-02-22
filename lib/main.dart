@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
             Icon(Icons.add_box_outlined)
           ]
       ),
-      body: [Text('홈'), Text('샵')][tab],
+      body: [ListTab(), Text('샵')][tab],
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
@@ -47,3 +47,39 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+class ListTab extends StatelessWidget {
+  const ListTab({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 3,
+
+      itemBuilder: (context, index) {
+        return Container(
+          width: double.infinity,
+          child: Column(
+            children: [
+              Image.asset("test.jpg", fit: BoxFit.fill),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text("좋아요100", style: TextStyle(
+                      fontWeight: FontWeight.bold
+                    ),),
+                    Text("글쓴이"),
+                    Text("글내용"),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
+}
+
