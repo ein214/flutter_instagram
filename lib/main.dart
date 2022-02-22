@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
+import 'style.dart' as style;
 
 void main() {
   runApp(
       MaterialApp(
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.white,
-            actionsIconTheme: IconThemeData(
-              color: Colors.black,
-              size: 30
-            ),
-            titleTextStyle: TextStyle(
-              color: Colors.black,
-              fontSize: 20
-            )
-          )
-        ),
+        theme: style.theme,
         home: MyApp(),
       )
   );
@@ -32,7 +21,8 @@ class MyApp extends StatelessWidget {
           actions: [
             Icon(Icons.add_box_outlined)
           ]
-      )
+      ),
+      body: TextButton(onPressed: (){}, child: Text('test'),),
     );
   }
 }
