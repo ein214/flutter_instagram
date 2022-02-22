@@ -23,6 +23,15 @@ class MyApp extends StatelessWidget {
           ]
       ),
       body: TextButton(onPressed: (){}, child: Text('test'),),
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ''),
+        ],
+
+      ),
+
     );
   }
 }
