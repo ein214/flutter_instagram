@@ -77,6 +77,28 @@ class ListTab extends StatelessWidget {
     return ListView.builder(
       itemCount: contents.length,
       itemBuilder: (context, index) {
+        /**
+         * 과제 해답
+         * return Column(
+         *  children : [
+         *    Image.network('이미지주소'),
+         *    Container(
+         *      constraints: BoxConstraints(maxWidth: 600),
+         *      padding: EdgeInsets.all(20),
+         *      width: double.infinity,
+         *      child: Column(
+         *        crossAxisAlignment: CrossAxisAlignment.start,
+         *        children: [
+         *          //동일
+         *        ]
+         *      )
+         *    )
+         *  ]
+         * )
+         *
+         * - 나는 Container부터 짰는데 Column부터 짜서 이미지 일단 넣고 시작하는게 훨씬 깔끔해보이고
+         * - 일단 이미지 가로폭을 늘리려고 했는데 BoxConstraints를 쓰면 최대 폭 자체를 지정할 수가 있었음.
+         */
         return Container(
           width: double.infinity,
           child: Column(
