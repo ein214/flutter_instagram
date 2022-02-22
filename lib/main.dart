@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'style.dart' as style;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(
@@ -24,14 +25,22 @@ class _MyAppState extends State<MyApp> {
   var contents = [];
 
   getData() async {
-    var result = await http.get(Uri.parse('https://codingapple1.github.io/app/data.json'));
-    var result2 = jsonDecode(result.body);
-    setState(() {
-      contents = result2;
-      print(result2);
-    });
+    try {
+      var result = await http.get(Uri.parse('https://codingapple1.github.io/app/data.json'));
+      var result2 = jsonDecode(result.body);
+      setState(() {
+        contents = result2;
+        print(result2);
+      });
 
-    print(result2.length);
+      print(result2.length);
+    } catch(error) {
+      Fluttertoast.showToast(
+        msg: "연결에러",
+        timeInSecForIosWeb: 5
+      );
+    }
+
   }
 
   @override
