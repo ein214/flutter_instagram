@@ -24,8 +24,6 @@ var theme = ThemeData(
       elevation: 5,
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey,
-      backgroundColor: Colors.white,
-      showSelectedLabels: false,
-      showUnselectedLabels: false
+      backgroundColor: Colors.white
     )
 );
