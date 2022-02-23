@@ -30,10 +30,7 @@ class _MyAppState extends State<MyApp> {
       var result2 = jsonDecode(result.body);
       setState(() {
         contents = result2;
-        print(result2);
       });
-
-      print(result2.length);
     } catch(error) {
       Fluttertoast.showToast(
         msg: "연결에러",
@@ -83,54 +80,60 @@ class ListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: contents.length,
-      itemBuilder: (context, index) {
-        /**
-         * 과제 해답
-         * return Column(
-         *  children : [
-         *    Image.network('이미지주소'),
-         *    Container(
-         *      constraints: BoxConstraints(maxWidth: 600),
-         *      padding: EdgeInsets.all(20),
-         *      width: double.infinity,
-         *      child: Column(
-         *        crossAxisAlignment: CrossAxisAlignment.start,
-         *        children: [
-         *          //동일
-         *        ]
-         *      )
-         *    )
-         *  ]
-         * )
-         *
-         * - 나는 Container부터 짰는데 Column부터 짜서 이미지 일단 넣고 시작하는게 훨씬 깔끔해보이고
-         * - 일단 이미지 가로폭을 늘리려고 했는데 BoxConstraints를 쓰면 최대 폭 자체를 지정할 수가 있었음.
-         */
-        return Container(
-          width: double.infinity,
-          child: Column(
-            children: [
-              Image.network(contents[index]['image']),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text("좋아요 "+contents[index]['likes'].toString(), style: TextStyle(
-                      fontWeight: FontWeight.bold
-                    ),),
-                    Text(contents[index]['user']),
-                    Text(contents[index]['content']),
-                  ],
-                ),
-              )
-            ],
-          ),
-        );
-      }
-    );
+
+    if (contents.isNotEmpty) {
+      return ListView.builder(
+          itemCount: contents.length,
+          itemBuilder: (context, index) {
+            /**
+             * 과제 해답
+             * return Column(
+             *  children : [
+             *    Image.network('이미지주소'),
+             *    Container(
+             *      constraints: BoxConstraints(maxWidth: 600),
+             *      padding: EdgeInsets.all(20),
+             *      width: double.infinity,
+             *      child: Column(
+             *        crossAxisAlignment: CrossAxisAlignment.start,
+             *        children: [
+             *          //동일
+             *        ]
+             *      )
+             *    )
+             *  ]
+             * )
+             *
+             * - 나는 Container부터 짰는데 Column부터 짜서 이미지 일단 넣고 시작하는게 훨씬 깔끔해보이고
+             * - 일단 이미지 가로폭을 늘리려고 했는데 BoxConstraints를 쓰면 최대 폭 자체를 지정할 수가 있었음.
+             */
+            return Container(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Image.network(contents[index]['image']),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text("좋아요 " + contents[index]['likes'].toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold
+                          ),),
+                        Text(contents[index]['user']),
+                        Text(contents[index]['content']),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+      );
+    } else {
+      return Text('로딩중');
+    }
   }
 }
 
