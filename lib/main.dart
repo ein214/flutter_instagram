@@ -77,15 +77,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getData();
-    scroll.addListener(() {
-      setState(() {
-        if (scroll.position.userScrollDirection == ScrollDirection.reverse) {
-          showAppBar = false;
-        } else {
-          showAppBar = true;
-        }
-      });
-    });
   }
 
   @override
@@ -98,7 +89,7 @@ class _MyAppState extends State<MyApp> {
           ]
       ),
       body: [ListTab(contents: contents, getData: getData), Text('샵')][tab],
-      bottomNavigationBar: showAppBar == true ? BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ''),
@@ -111,7 +102,7 @@ class _MyAppState extends State<MyApp> {
             tab = i;
           });
         },  //onPressed랑 똑같
-      ) : Container(),
+      ),
 
     );
   }
@@ -131,6 +122,7 @@ class _ListTabState extends State<ListTab> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     scroll.addListener(() {
       //print(scroll.position.maxScrollExtent);
@@ -138,6 +130,7 @@ class _ListTabState extends State<ListTab> {
       if (scroll.position.pixels == scroll.position.maxScrollExtent) {
         widget.getData();
       }
+
     });
   }
 
