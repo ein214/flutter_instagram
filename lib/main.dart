@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 void main() {
   runApp(
@@ -26,7 +28,7 @@ class _MyAppState extends State<MyApp> {
   var tab = 0;
   var contents = [];
   var getHttpCount = 0;
-
+  var userImage;
 
   addData(a) {
     setState(() {
@@ -68,9 +70,18 @@ class _MyAppState extends State<MyApp> {
           actions: [
             IconButton(
               icon:Icon(Icons.add_box_outlined),
-              onPressed: (){
+              onPressed: () async {
+                var picker = ImagePicker();
+                var image = await picker.pickImage(source: ImageSource.gallery);
+                if (image != null) {
+                  print(image);
+                  setState(() {
+                    userImage = File(image.path);
+                  });
+                }
+
                 Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Upload())
+                  MaterialPageRoute(builder: (context) => Upload(userImage: userImage, addData: addData))
                 );
               },
               iconSize: 30,
@@ -144,7 +155,7 @@ class _ListTabState extends State<ListTab> {
           itemBuilder: (context, index) {
             return Column(
               children: [
-                Image.network(widget.contents[index]['image']),
+                widget.contents[index]['image'].runtimeType != String ? Image.file(widget.contents[index]['image']): Image.network(widget.contents[index]['image']),
                 Container(
                   constraints: BoxConstraints(maxWidth: double.infinity),
                   padding: EdgeInsets.all(20),
@@ -172,22 +183,51 @@ class _ListTabState extends State<ListTab> {
 }
 
 class Upload extends StatelessWidget {
-  const Upload({Key? key}) : super(key: key);
+  Upload({Key? key, this.userImage, this.addData}) : super(key: key);
+  final userImage;
+  final addData;
+
+  var textData = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('이미지 업로드화면'),
+      appBar: AppBar(
+        leading: IconButton(
+          icon:Icon(Icons.close),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: Colors.black,
+        ),
+        actions: [
           IconButton(
-            icon:Icon(Icons.close),
+            icon: Icon(Icons.send),
+            iconSize: 30,
             onPressed: () {
+              addData({
+                "id" : "5",
+                "image": userImage,
+                "likes" : 10,
+                "date": "Feb 24",
+                "content" : textData.text,
+                "liked": false,
+                "user" : "einee214"
+              });
+
               Navigator.pop(context);
             },
           )
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          userImage != null ? Image.file(userImage) : Text(""),
+          Text('이미지 업로드화면'),
+          TextField(controller: textData,),
+
         ],
       ),
     );
