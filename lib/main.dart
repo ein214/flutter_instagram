@@ -26,51 +26,31 @@ class _MyAppState extends State<MyApp> {
   var tab = 0;
   var contents = [];
   var getHttpCount = 0;
-  var url = "";
-  var scroll = ScrollController();
-  var showAppBar = true;
 
 
+  addData(a) {
+    setState(() {
+      contents.add(a);
+      getHttpCount++;
+    });
+  }
+
+  /// 과제하면서 해답과 다른점 - 그냥 일단 굴러가게만 만들었었음.
+  /// 1. switch가 아니라 getMore에 대한 부분을 별도 구현했어야했고
+  /// 2. 데이터에 추가하는 함수정도만 넘겨도 됐음.
   getData() async {
-    switch(getHttpCount) {
-      case 0:
-        url = 'https://codingapple1.github.io/app/data.json';
-        break;
-      case 1:
-        url = 'https://codingapple1.github.io/app/more1.json';
-        break;
-      case 2:
-        url = 'https://codingapple1.github.io/app/more2.json';
-        break;
-      default:
-        url = "";
-        break;
-    }
-
-    if (url.isEmpty) {
+    var result = await http.get(Uri.parse('https://codingapple1.github.io/app/data.json'));
+    if (result.statusCode == 200) {
+      setState(() {
+        var result2 = jsonDecode(result.body);
+        contents = result2;
+        getHttpCount++;
+      });
+    } else {
       Fluttertoast.showToast(
-          msg: "마지막 게시물입니다.",
+          msg: "연결에러",
           timeInSecForIosWeb: 5
       );
-    } else {
-      var result = await http.get(Uri.parse(url));
-      if (result.statusCode == 200) {
-        setState(() {
-          if (getHttpCount == 0) {
-            var result2 = jsonDecode(result.body);
-            print(result2);
-            contents = result2;
-          } else {
-            contents.add(jsonDecode(result.body));
-          }
-          getHttpCount++;
-        });
-      } else {
-        Fluttertoast.showToast(
-            msg: "연결에러",
-            timeInSecForIosWeb: 5
-        );
-      }
     }
   }
 
@@ -97,13 +77,12 @@ class _MyAppState extends State<MyApp> {
             )
           ]
       ),
-      body: [ListTab(contents: contents, getData: getData), Text('샵')][tab],
+      body: [ListTab(contents: contents, addData: addData, getHttpCount: getHttpCount), Text('샵')][tab],
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: ''),
         ],
-
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (i){
@@ -118,9 +97,10 @@ class _MyAppState extends State<MyApp> {
 }
 
 class ListTab extends StatefulWidget {
-  const ListTab({Key? key, this.contents, this.getData }) : super(key: key);
+  const ListTab({Key? key, this.contents, this.addData, this.getHttpCount }) : super(key: key);
   final contents;
-  final getData;
+  final addData;
+  final getHttpCount;
 
   @override
   State<ListTab> createState() => _ListTabState();
@@ -129,17 +109,28 @@ class ListTab extends StatefulWidget {
 class _ListTabState extends State<ListTab> {
   var scroll = ScrollController();
 
+  getMore() async {
+    if (widget.getHttpCount > 2) {
+      Fluttertoast.showToast(
+          msg: "마지막 게시물입니다.",
+          timeInSecForIosWeb: 5
+      );
+    } else {
+      var result = await http.get(Uri.parse(
+          'https://codingapple1.github.io/app/more${widget
+              .getHttpCount}.json'));
+      var result2 = jsonDecode(result.body);
+      widget.addData(result2);
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     scroll.addListener(() {
-      //print(scroll.position.maxScrollExtent);
-      print(scroll.position.userScrollDirection);
       if (scroll.position.pixels == scroll.position.maxScrollExtent) {
-        widget.getData();
+        getMore();
       }
-
     });
   }
 
@@ -151,28 +142,6 @@ class _ListTabState extends State<ListTab> {
           controller: scroll,
           itemCount: widget.contents.length,
           itemBuilder: (context, index) {
-            /**
-             * 과제 해답
-             * return Column(
-             *  children : [
-             *    Image.network('이미지주소'),
-             *    Container(
-             *      constraints: BoxConstraints(maxWidth: 600),
-             *      padding: EdgeInsets.all(20),
-             *      width: double.infinity,
-             *      child: Column(
-             *        crossAxisAlignment: CrossAxisAlignment.start,
-             *        children: [
-             *          //동일
-             *        ]
-             *      )
-             *    )
-             *  ]
-             * )
-             *
-             * - 나는 Container부터 짰는데 Column부터 짜서 이미지 일단 넣고 시작하는게 훨씬 깔끔해보이고
-             * - 일단 이미지 가로폭을 늘리려고 했는데 BoxConstraints를 쓰면 최대 폭 자체를 지정할 수가 있었음.
-             */
             return Column(
               children: [
                 Image.network(widget.contents[index]['image']),
