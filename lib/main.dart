@@ -10,6 +10,7 @@ void main() {
       MaterialApp(
         theme: style.theme,
         home: MyApp(),
+
       )
   );
 }
@@ -85,7 +86,15 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
           title: Text('Instagram'),
           actions: [
-            Icon(Icons.add_box_outlined)
+            IconButton(
+              icon:Icon(Icons.add_box_outlined),
+              onPressed: (){
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Upload())
+                );
+              },
+              iconSize: 30,
+            )
           ]
       ),
       body: [ListTab(contents: contents, getData: getData), Text('샵')][tab],
@@ -193,3 +202,25 @@ class _ListTabState extends State<ListTab> {
   }
 }
 
+class Upload extends StatelessWidget {
+  const Upload({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('이미지 업로드화면'),
+          IconButton(
+            icon:Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+}
