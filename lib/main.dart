@@ -8,13 +8,16 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-      MaterialApp(
-        theme: style.theme,
-        home: MyApp(),
-
+      ChangeNotifierProvider(
+        create: (c) => Store1(),
+        child: MaterialApp(
+          theme: style.theme,
+          home: MyApp(),
+        ),
       )
   );
 }
@@ -260,14 +263,58 @@ class Upload extends StatelessWidget {
   }
 }
 
+class Store1 extends ChangeNotifier {
+  var name = 'john kim';
+  var follower = 0;
+  var clickedFollow = false;
+  changeName() {
+    name = 'john Park2';
+    notifyListeners();
+  }
+
+  follow() {
+    follower++;
+    clickedFollow = true;
+    notifyListeners();
+  }
+
+  unfollow() {
+    follower--;
+    clickedFollow = false;
+    notifyListeners();
+  }
+}
+
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Text('프로필 페이지'),
+      appBar: AppBar(
+        title: Text(context.watch<Store1>().name),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.grey,
+            ),
+            Text('팔로워 ${context.watch<Store1>().follower}명'),
+            ElevatedButton(onPressed: (){
+              if (context.read<Store1>().clickedFollow == true) {
+                context.read<Store1>().unfollow();
+              } else {
+                context.read<Store1>().follow();
+              }
+
+            }, child: Text('Follow'),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
