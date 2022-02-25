@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   runApp(
@@ -180,7 +181,19 @@ class _ListTabState extends State<ListTab> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold
                         ),),
-                      Text(widget.contents[index]['user']),
+                      GestureDetector(
+                        child:Text(widget.contents[index]['user']),
+                        onTap: () {
+                          Navigator.push(context, 
+                            PageRouteBuilder(
+                              pageBuilder: (c, a1, a2) => Profile(),
+                              transitionsBuilder: (c, a1, a2, child) =>
+                                FadeTransition(opacity: a1, child: child),
+                              transitionDuration: Duration(milliseconds: 1500)
+                            )
+                          );
+                        },
+                      ),
                       Text(widget.contents[index]['content']),
                     ],
                   ),
@@ -243,6 +256,18 @@ class Upload extends StatelessWidget {
 
         ],
       ),
+    );
+  }
+}
+
+class Profile extends StatelessWidget {
+  const Profile({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Text('프로필 페이지'),
     );
   }
 }
