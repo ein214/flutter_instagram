@@ -12,8 +12,11 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-      ChangeNotifierProvider(
-        create: (c) => Store1(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (c) => Store1()),
+          ChangeNotifierProvider(create: (c) => Store2())
+        ],
         child: MaterialApp(
           theme: style.theme,
           home: MyApp(),
@@ -263,18 +266,35 @@ class Upload extends StatelessWidget {
   }
 }
 
-class Store1 extends ChangeNotifier {
+class Store2 extends ChangeNotifier {
   var name = 'john kim';
+}
+
+class Store1 extends ChangeNotifier {
+
   var follower = 0;
   var clickedFollow = false;
-  changeName() {
-    name = 'john Park2';
+  var profileImage = [];
+
+  getData() async {
+    var result = await http.get(Uri.parse('https://codingapple1.github.io/app/profile.json'));
+    var result2 = jsonDecode(result.body);
+    profileImage = result2;
     notifyListeners();
   }
 
   follow() {
-    follower++;
-    clickedFollow = true;
+    if (clickedFollow == true) {
+      follower--;
+      clickedFollow = false;
+    } else {
+      follower++;
+      clickedFollow = true;
+    }
+
+
+
+
     notifyListeners();
   }
 
@@ -292,12 +312,12 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.watch<Store1>().name),
+        title: Text(context.watch<Store2>().name),
       ),
       body: SizedBox(
         width: double.infinity,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             CircleAvatar(
               backgroundColor: Colors.grey,
