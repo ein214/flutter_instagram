@@ -9,8 +9,18 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'notification.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'shop.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
       MultiProvider(
         providers: [
@@ -78,14 +88,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    initNotification(context);
     saveData();
     getData();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).devicePixelRatio);
+
+
     return Scaffold(
+      floatingActionButton: FloatingActionButton(child: Text('+'), onPressed: () {
+        showNotification2();
+      },),
       appBar: AppBar(
+
           title: Text('Instagram'),
           actions: [
             IconButton(
@@ -108,7 +126,7 @@ class _MyAppState extends State<MyApp> {
             )
           ]
       ),
-      body: [ListTab(contents: contents, addData: addData, getHttpCount: getHttpCount), Text('샵')][tab],
+      body: [ListTab(contents: contents, addData: addData, getHttpCount: getHttpCount), Shop()][tab],
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
@@ -281,6 +299,8 @@ class Store1 extends ChangeNotifier {
     var result2 = jsonDecode(result.body);
     profileImage = result2;
     notifyListeners();
+
+    print(profileImage);
   }
 
   follow() {
@@ -291,9 +311,6 @@ class Store1 extends ChangeNotifier {
       follower++;
       clickedFollow = true;
     }
-
-
-
 
     notifyListeners();
   }
@@ -314,26 +331,53 @@ class Profile extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.watch<Store2>().name),
       ),
-      body: SizedBox(
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.grey,
-            ),
-            Text('팔로워 ${context.watch<Store1>().follower}명'),
-            ElevatedButton(onPressed: (){
-              if (context.read<Store1>().clickedFollow == true) {
-                context.read<Store1>().unfollow();
-              } else {
-                context.read<Store1>().follow();
-              }
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: ProfileHeader(),
+          ),
+          SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (c, i) => Image.network(context.read<Store1>().profileImage[i]),
+                childCount: context.read<Store1>().profileImage.length
+              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2)
+          ),
 
-            }, child: Text('Follow'),
-            )
-          ],
-        ),
+
+        ]
+      )
+    );
+  }
+}
+
+class ProfileHeader extends StatelessWidget {
+  const ProfileHeader({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.grey,
+          ),
+          Text('팔로워 ${context.watch<Store1>().follower}명'),
+          ElevatedButton(onPressed: (){
+            if (context.read<Store1>().clickedFollow == true) {
+              context.read<Store1>().unfollow();
+            } else {
+              context.read<Store1>().follow();
+            }
+
+          }, child: Text('Follow'),
+          ),
+          ElevatedButton(onPressed: (){
+            context.read<Store1>().getData();
+          }, child: Text('사진가져오기'))
+        ],
       ),
     );
   }
